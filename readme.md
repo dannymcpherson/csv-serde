@@ -1,3 +1,12 @@
+### Modifications in this fork
+Added null value support through a new table property: "nullString" (using RmnCsvSerde.java).  To accomplish this, copies/alterations of dependent files
+from opencsv-2.3.jar have been made.  To determine a nullString match, the modified CSVParser will examine the raw delimited values.  This way, the "nullString" property can
+be quoted and/or escaped, but it is not a requirement.<br>
+
+Examples:<br>
+"nullString" could be set to "NULL", where the unquoted string NULL will be treated as a null value
+"nullString" could be set to "'NULL'", where the string 'NULL' will be treated as a null value
+
 # Hive CSV Support
 
 [![Build Status](https://drone.io/github.com/ogrodnek/csv-serde/status.png)](https://drone.io/github.com/ogrodnek/csv-serde/latest)
@@ -13,7 +22,7 @@ This SerDe adds *real* CSV input and ouput support to hive using the excellent [
 add jar path/to/csv-serde.jar;
 
 create table my_table(a string, b string, ...)
-  row format serde 'com.bizo.hive.serde.csv.CSVSerde'
+  row format serde 'com.bizo.hive.serde.csv.RmnCsvSerde'
   stored as textfile
 ;
 ```
@@ -26,6 +35,7 @@ The default separator, quote, and escape characters from the `opencsv` library a
 DEFAULT_ESCAPE_CHARACTER \
 DEFAULT_QUOTE_CHARACTER  "
 DEFAULT_SEPARATOR        ,
+DEFAULT_NULL_STRING      NULL
 ```
 
 You can also specify custom separator, quote, or escape characters.
@@ -34,11 +44,12 @@ You can also specify custom separator, quote, or escape characters.
 add jar path/to/csv-serde.jar;
 
 create table my_table(a string, b string, ...)
- row format serde 'com.bizo.hive.serde.csv.CSVSerde'
+ row format serde 'com.bizo.hive.serde.csv.RmnCsvSerde'
  with serdeproperties (
    "separatorChar" = "\t",
    "quoteChar"     = "'",
-   "escapeChar"    = "\\"
+   "escapeChar"    = "\\",
+   "nullString"    = "'\\N'"
   )	  
  stored as textfile
 ;
